@@ -69,7 +69,8 @@ Verifique se as portas utilizadas pelos serviços (como a 3306 para MySQL) não 
 
 Volumes Não Criados: Certifique-se de que todos os volumes externos especificados estão criados antes de iniciar a stack. Use
 
-```docker volume create <volume_name>
+```
+docker volume create <volume_name>
 ```
 para criar os volumes necessários.
 */
