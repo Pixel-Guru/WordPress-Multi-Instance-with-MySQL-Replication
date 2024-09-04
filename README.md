@@ -136,22 +136,29 @@ Os requisitos de hardware para executar esta stack de forma eficiente dependem d
 
 # Memória RAM
 Importância: A RAM é crítica para o desempenho, especialmente devido à execução simultânea de múltiplas instâncias do MySQL e WordPress. Cada instância consome uma quantidade significativa de memória para operar de forma eficiente.
+
 Recomendação:
 Ambientes de Desenvolvimento/Teste: Mínimo de 4GB de RAM.
+
 Ambientes de Produção com Baixo Tráfego: Mínimo de 8GB de RAM.
+
 Ambientes de Produção com Alto Tráfego ou Múltiplas Instâncias: 16GB de RAM ou mais, dependendo do número de instâncias e volume de acessos.
 
 # Processador (CPU)
 Importância: A CPU é responsável por lidar com as requisições de usuários, processamento de dados e tarefas de replicação do banco de dados. Um processador mais potente garante respostas mais rápidas e melhor capacidade de processamento paralelo.
+
 Recomendação:
 Ambientes de Desenvolvimento/Teste: Processador dual-core com frequência mínima de 2.0 GHz.
 Ambientes de Produção com Baixo Tráfego: Processador quad-core com frequência mínima de 2.5 GHz.
+
 Ambientes de Produção com Alto Tráfego ou Múltiplas Instâncias: Processador hexa-core ou superior, preferencialmente com capacidades de multithreading.
 
 # Armazenamento
 Importância: Espaço de armazenamento adequado é necessário para hospedar os dados do WordPress, bancos de dados MySQL e logs do sistema.
+
 Recomendação:
 Ambientes de Desenvolvimento/Teste: Mínimo de 50GB de armazenamento SSD.
+
 Ambientes de Produção: Mínimo de 100GB de armazenamento SSD, com possibilidade de expansão conforme o crescimento dos dados.
 
 # Rede
