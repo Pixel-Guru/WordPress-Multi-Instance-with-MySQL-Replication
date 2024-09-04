@@ -168,7 +168,7 @@ Copyright (c) 2024 Alexandre Louro
 
 ## Autor
 
-Projeto criado por Alexandre Louro. Dúvidas ou colaborações? Entre em contato em contato-louro@proton.me .Se usar ou modificar este projeto, mantenha os créditos.
+Projeto criado por Alexandre Louro. Dúvidas, bugs ou colaborações? Entre manda um email para: contato-louro@proton.me com o assunto especifico ex: detctei um bug houve isso e aquilo e etc.... Se usar ou modificar este projeto, mantenha os créditos.
 
 ## Contribuições
 
