@@ -1,0 +1,160 @@
+version: "3.7"
+
+services:
+  wordpress1:
+    image: wordpress:latest 
+    # Altere a versão do WordPress (e PHP) caso necessário. A tag 'latest' sempre busca a versão mais recente.
+    # Consulte: https://hub.docker.com/_/wordpress/tags para escolher uma versão específica.
+    
+    volumes:
+      - wordpress1_data:/var/www/html  
+      # Se estiver instalando múltiplas instâncias de WordPress, altere 'wordpress1_data' para um nome único (ex: wordpress2_data).
+    
+    networks:
+      - wordpress1_network 
+      # Mude 'wordpress1_network' para um nome de rede exclusivo para cada instância do WordPress, garantindo o isolamento (ex: wordpress2_network).
+      
+      - traefik_bridge 
+      # Esta rede conecta ao Traefik. Siga as instruções do README para não alterá-la.
+
+    environment:
+      - WORDPRESS_DB_NAME=wordpress1 
+      # Alterar o nome do banco de dados pode aumentar a segurança. Gere um nome seguro em: https://it-tools.tech/token-generator.
+      
+      - WORDPRESS_DB_HOST=wordpress1_mysql 
+      # Modifique o host MySQL para diferentes instâncias (ex: wordpress2_mysql). Para aumentar a segurança, utilize um nome gerado.
+      
+      - WORDPRESS_DB_PORT=3306 
+      # Não é necessário alterar, esta é a porta padrão do MySQL.
+      
+      - WORDPRESS_DB_USER=root 
+      # Mudar o nome do usuário pode aumentar a segurança. Gere um nome em: https://it-tools.tech/token-generator.
+      
+      - WORDPRESS_DB_PASSWORD=${WORDPRESS_DB_PASSWORD} 
+      # Alterar a senha é recomendado. Use uma senha forte, que pode ser gerada em: https://it-tools.tech/encryption.
+      
+      - WP_REDIS_HOST=redis 
+      # Não alterar, este é o host Redis configurado para cache.
+      
+      - WP_REDIS_DATABASE=6 
+      # Não alterar, esta configuração define o banco de dados Redis a ser usado.
+      
+      - VIRTUAL_HOST= 
+      # Especifique o domínio ou subdomínio para o WordPress (ex: seu-site.com).
+      
+      - WP_LOCALE=pt_BR 
+      # Define o idioma do WordPress. Consulte: https://codex.wordpress.org/pt:WordPress_no_seu_idioma para outras opções.
+
+    deploy: 
+      mode: replicated # Não alterar.
+      replicas: 1 # Ajuste conforme necessário para escalabilidade.
+      placement: 
+        constraints: 
+          - node.role == manager # Não alterar, garante que o container execute em um nó gerenciado.
+
+      labels:
+        - traefik.enable=true # Não alterar.
+        - traefik.http.routers.wordpress1.rule=Host(`seu-dominio.com`)
+        # Altere para o domínio ou subdomínio específico do WordPress (ex: wordpress2.seu-dominio.com).
+        
+        - traefik.http.routers.wordpress1.entrypoints=websecure # Não alterar.
+        - traefik.http.routers.wordpress1.tls.certresolver=letsencryptresolver # Não alterar.
+        - traefik.http.routers.wordpress1.service=wordpress1 
+        # Se instalar múltiplas instâncias, altere o nome do serviço para algo exclusivo (ex: wordpress2).
+        
+        - traefik.http.services.wordpress1.loadbalancer.server.port=80 # Não alterar.
+        - traefik.http.services.wordpress1.loadbalancer.passHostHeader=true # Não alterar.
+
+  wordpress1_mysql: 
+    image: mysql:5.7 # Não alterar, a menos que precise de outra versão específica do MySQL.
+
+    volumes:
+      - wordpress1_mysql_data:/var/lib/mysql 
+      # Se houver múltiplas instâncias, altere 'wordpress1_mysql_data' para um nome único (ex: wordpress2_mysql_data).
+    
+    networks:
+      - wordpress1_network 
+      # Mantenha o nome da rede igual ao que foi configurado acima (linha 9).
+
+    environment:
+      - MYSQL_DATABASE=wordpress1 
+      # Nome do banco de dados. Altere para algo exclusivo se estiver configurando múltiplas instâncias.
+      
+      - MYSQL_USER=root 
+      # Nome do usuário do banco de dados. Alterar o usuário root é recomendado por segurança.
+      
+      - MYSQL_PASSWORD=${WORDPRESS_DB_PASSWORD} 
+      # A senha do banco de dados. Garanta que a variável esteja definida no arquivo `.env` ou substitua diretamente pela senha.
+      
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} 
+      # Senha para o usuário root. Certifique-se de que a variável esteja configurada corretamente.
+      
+      - MYSQL_REPLICATION_USER=${MYSQL_REPLICATION_USER} 
+      # Usuário para replicação. Necessário apenas se estiver configurando replicação.
+      
+      - MYSQL_REPLICATION_PASSWORD=${MYSQL_REPLICATION_PASSWORD} 
+      # Senha para o usuário de replicação. Defina no arquivo `.env` ou diretamente no código.
+
+    deploy: 
+      mode: replicated # Não alterar.
+      replicas: 1 # Mantenha conforme a configuração desejada.
+      placement: 
+        constraints: 
+          - node.role == manager # Não alterar.
+
+  mysql_replica:
+    image: mysql:5.7 # Não alterar, a menos que precise de outra versão específica.
+    volumes:
+      - mysql_replica_data:/var/lib/mysql # Não alterar.
+
+    networks:
+      - traefik_bridge # Não alterar se seguir o README.
+
+    environment:
+      - MYSQL_REPLICATION_MODE=slave 
+      # Define este MySQL como escravo para replicação. Para replicação master-master, altere para 'master'.
+      
+      - MYSQL_MASTER_HOST=wordpress1_mysql 
+      # Host do MySQL mestre. Ajuste para o nome correto do serviço ou IP.
+      
+      - MYSQL_MASTER_PORT=3306 
+      # Porta do MySQL mestre. Altere se o mestre estiver configurado em outra porta.
+
+      - MYSQL_REPLICATION_USER=${MYSQL_REPLICATION_USER} 
+      # Usuário para replicação. Certifique-se de que a variável esteja definida no arquivo `.env`.
+      
+      - MYSQL_REPLICATION_PASSWORD=${MYSQL_REPLICATION_PASSWORD} 
+      # Senha para replicação. Defina no arquivo `.env`.
+
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} 
+      # Senha do usuário root. Certifique-se de que a senha esteja configurada corretamente.
+
+    deploy: 
+      mode: replicated # Não alterar.
+      replicas: 1 # Mantenha conforme a configuração desejada.
+      placement: 
+        constraints: 
+          - node.role == manager # Não alterar.
+
+volumes: 
+  wordpress1_data: 
+    external: true
+    name: wordpress1_data 
+    # Alterar para nomes exclusivos (ex: wordpress2_data) para múltiplas instâncias.
+
+  wordpress1_mysql_data:
+    external: true
+    name: wordpress1_mysql_data 
+    # Alterar para nomes únicos para cada instância do banco de dados.
+
+  mysql_replica_data:
+    external: true
+    name: mysql_replica_data 
+    # Alterar para nomes únicos se houver múltiplas réplicas.
+
+networks:
+  wordpress1_network: 
+    external: true # Não alterar.
+    
+  traefik_bridge: 
+    external: true # Não alterar.
