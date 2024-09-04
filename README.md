@@ -44,12 +44,16 @@ Para adicionar novas instâncias do WordPress, basta replicar os blocos de códi
 # /
 
 # Possíveis Razões para a Stack não Funcionar Corretamente
-
+*/
 # Configurações de Rede
 
-Rede não Existente: Certifique-se de que todas as redes definidas no arquivo muti_wordpress_em_docker.yaml existem previamente. Use o comando docker network create <network_name> para criar redes necessárias.
-Conflito de Nomes: Nomes de redes duplicados podem causar conflitos. Ao adicionar novas instâncias, sempre utilize nomes únicos para as redes.
-Variáveis de Ambiente Não Definidas
+Rede não Existente: Certifique-se de que todas as redes definidas no arquivo muti_wordpress_em_docker.yaml existem previamente. Use o comando docker network 
+```create <network_name>``` para criar redes necessárias.
+
+# Conflito de Nomes: 
+Nomes de redes duplicados podem causar conflitos. Ao adicionar novas instâncias, sempre utilize nomes únicos para as redes.
+*/
+# Variáveis de Ambiente Não Definidas
 
 # Arquivo .env Ausente ou Incompleto:
 Verifique se todas as variáveis de ambiente utilizadas (WORDPRESS_DB_PASSWORD, MYSQL_ROOT_PASSWORD, MYSQL_REPLICATION_USER, MYSQL_REPLICATION_PASSWORD) estão devidamente definidas em um arquivo .env.
@@ -60,19 +64,26 @@ Conflitos de Portas
 
 # Portas Já em Uso: 
 Verifique se as portas utilizadas pelos serviços (como a 3306 para MySQL) não estão sendo usadas por outros processos no host. Caso necessário, mapeie para portas alternativas.
-***
+*/
 # Persistência de Dados
 
-Volumes Não Criados: Certifique-se de que todos os volumes externos especificados estão criados antes de iniciar a stack. Use docker volume create <volume_name> para criar os volumes necessários.
-Permissões de Arquivos: Verifique se o usuário que executa o Docker tem permissões adequadas nos diretórios de volumes para leitura e escrita.
-Configurações de DNS e Domínios
+Volumes Não Criados: Certifique-se de que todos os volumes externos especificados estão criados antes de iniciar a stack. Use
+
+```docker volume create <volume_name>
+```
+para criar os volumes necessários.
+*/
+# Permissões de Arquivos: 
+Verifique se o usuário que executa o Docker tem permissões adequadas nos diretórios de volumes para leitura e escrita.
+*/
+# Configurações de DNS e Domínios
 
 # Domínio Não Apontando para o Servidor: 
 Assegure-se de que os domínios ou subdomínios especificados estão corretamente configurados e apontam para o endereço IP do servidor onde a stack está sendo executada.
 
 # Certificados SSL: 
 Problemas na obtenção ou renovação de certificados Let's Encrypt podem impedir o acesso seguro. Verifique os logs do Traefik para identificar e resolver esses problemas.
-
+*/
 # Incompatibilidades de Versões
 
 # Versões de Imagens Desatualizadas ou Incompatíveis: 
